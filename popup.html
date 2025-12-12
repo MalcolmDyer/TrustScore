@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TrustScore</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div>
+        <div class="title">TrustScore</div>
+        <div class="subtitle">Behavioral anti-phishing</div>
+      </div>
+      <div class="profile" id="profileLabel"></div>
+    </header>
+
+    <section class="score-card">
+      <div class="score-circle" id="scoreValue">--</div>
+      <div class="score-meta">
+        <div class="tier" id="tierLabel">Waiting for page...</div>
+        <div class="url" id="urlLabel"></div>
+        <button id="allowlistBtn" class="ghost-btn">Allowlist domain</button>
+      </div>
+    </section>
+
+    <section class="breakdown">
+      <div class="breakdown-title">Risk breakdown</div>
+      <div class="breakdown-list">
+        <div class="row"><span>URL</span><span id="urlRisk">0 / 30</span></div>
+        <div class="row"><span>Behavior</span><span id="behaviorRisk">0 / 30</span></div>
+        <div class="row"><span>DOM</span><span id="domRisk">0 / 25</span></div>
+        <div class="row"><span>SSL / Resources</span><span id="sslRisk">0 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="reasons">
+      <div class="breakdown-title">Top signals</div>
+      <div id="reasonsList" class="reasons-list"></div>
+    </section>
+
+    <section class="history">
+      <div class="breakdown-title">Recent pages</div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TrustScore Options</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="title">TrustScore Settings</div>
+        <div class="subtitle">Tune sensitivity and manage trusted domains.</div>
+      </div>
+    </header>
+
+    <section>
+      <div class="section-title">Sensitivity profile</div>
+      <div class="pill-row">
+        <label class="pill"><input type="radio" name="sensitivity" value="strict"> Strict</label>
+        <label class="pill"><input type="radio" name="sensitivity" value="normal"> Normal</label>
+        <label class="pill"><input type="radio" name="sensitivity" value="relaxed"> Relaxed</label>
+      </div>
+      <div class="hint">Strict leans on behavior and domain risks. Relaxed lowers sensitivity for trusted browsing.</div>
+    </section>
+
+    <section>
+      <div class="section-title">Allowlist</div>
+      <form id="allowlistForm" class="inline-form">
+        <input type="text" id="allowlistInput" placeholder="example.com">
+        <button type="submit">Add</button>
+      </form>
+      <div id="allowlistList" class="list"></div>
+    </section>
+
+    <section>
+      <div class="section-title">Data & privacy</div>
+      <label class="toggle">
+        <input type="checkbox" id="backendToggle">
+        <span>Allow optional lookups (domain age / reputation) when available</span>
+      </label>
+      <div class="hint">No content is sent today. This toggle prepares for a future backend.</div>
+    </section>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>
