@@ -1,6 +1,6 @@
 # TrustScore Anti-Phishing Extension
 
-Behavioral TrustScore detector that scores pages (0–100) using URL, DOM, behavior, and SSL/mixed-content signals, then surfaces a widget/banner plus popup breakdown.
+Behavioral TrustScore detector that scores pages (0–100 with 100 being "safe") using URL, DOM, behavior, and SSL/mixed-content signals, then surfaces a widget/banner plus popup breakdown.
 
 ## What’s inside
 - `manifest.json` — MV3 manifest for background, content script, popup, options.
