@@ -10,11 +10,12 @@ async function init() {
 
   const allowlistBtn = document.getElementById("allowlistBtn");
   allowlistBtn.addEventListener("click", async () => {
-    if (!evaluation?.hostname) return;
-    const allow = !settings.allowlist?.some((item) => evaluation.hostname.endsWith(item));
-    const result = await toggleAllowlist(evaluation.hostname, allow);
+    const hostname = normalizeDomain(evaluation?.hostname);
+    if (!hostname) return;
+    const allow = !isAllowlisted(hostname, settings.allowlist);
+    const result = await toggleAllowlist(hostname, allow);
     settings.allowlist = result.allowlist;
-    updateAllowlistButton(evaluation.hostname, settings.allowlist);
+    updateAllowlistButton(hostname, settings.allowlist);
   });
 }
 
@@ -64,7 +65,7 @@ function updateAllowlistButton(hostname, allowlist) {
     button.textContent = "Allowlist domain";
     return;
   }
-  const isAllowed = allowlist?.some((item) => hostname.endsWith(item));
+  const isAllowed = isAllowlisted(hostname, allowlist);
   button.textContent = isAllowed ? "Remove from allowlist" : "Allowlist domain";
   button.disabled = false;
 }
@@ -127,4 +128,24 @@ function toggleAllowlist(domain, allow) {
   return new Promise((resolve) => {
     chrome.runtime.sendMessage({ type: "toggleAllowlist", domain, allow }, resolve);
   });
+}
+
+function normalizeDomain(value = "") {
+  if (!value) return "";
+  try {
+    const parsed = new URL(value.includes("://") ? value : `https://${value}`);
+    const hostname = parsed.hostname.toLowerCase().replace(/^\./, "");
+    if (!hostname || hostname.includes("..") || !/^[a-z0-9.-]+$/.test(hostname)) {
+      return "";
+    }
+    return hostname;
+  } catch (err) {
+    return "";
+  }
+}
+
+function isAllowlisted(hostname, allowlist = []) {
+  const normalizedHost = normalizeDomain(hostname);
+  if (!normalizedHost) return false;
+  return allowlist.some((item) => normalizedHost === item || normalizedHost.endsWith(`.${item}`));
 }

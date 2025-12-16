@@ -48,6 +48,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 async function loadSettings() {
   const stored = await chrome.storage.local.get(SETTINGS_KEY);
   const merged = { ...DEFAULT_SETTINGS, ...(stored[SETTINGS_KEY] || {}) };
+  merged.allowlist = normalizeAllowlist(merged.allowlist);
   await chrome.storage.local.set({ [SETTINGS_KEY]: merged });
   return merged;
 }
@@ -61,11 +62,15 @@ async function saveSettings(settings) {
 
 async function toggleAllowlist(domain, allow) {
   const settings = await loadSettings();
+  const normalized = normalizeDomain(domain);
+  if (!normalized) {
+    return { allowlist: settings.allowlist };
+  }
   const set = new Set(settings.allowlist || []);
   if (allow) {
-    set.add(domain);
+    set.add(normalized);
   } else {
-    set.delete(domain);
+    set.delete(normalized);
   }
   settings.allowlist = Array.from(set);
   await saveSettings(settings);
@@ -285,7 +290,9 @@ function round(value) {
 }
 
 function isAllowlisted(allowlist = [], hostname = "") {
-  return allowlist.some((item) => hostname.endsWith(item));
+  const target = normalizeDomain(hostname);
+  if (!target) return false;
+  return allowlist.some((item) => target === item || target.endsWith(`.${item}`));
 }
 
 async function persistHistory(entry) {
@@ -299,4 +306,27 @@ async function persistHistory(entry) {
   });
   const trimmed = list.slice(0, MAX_HISTORY);
   await chrome.storage.local.set({ [RECENT_HISTORY_KEY]: trimmed });
+}
+
+function normalizeDomain(domain) {
+  if (!domain) return null;
+  try {
+    const parsed = new URL(domain.includes("://") ? domain : `https://${domain}`);
+    const hostname = parsed.hostname.toLowerCase().replace(/^\./, "");
+    if (!hostname || hostname.includes("..") || !/^[a-z0-9.-]+$/.test(hostname)) {
+      return null;
+    }
+    return hostname;
+  } catch (err) {
+    return null;
+  }
+}
+
+function normalizeAllowlist(list = []) {
+  const set = new Set();
+  list.forEach((item) => {
+    const normalized = normalizeDomain(item);
+    if (normalized) set.add(normalized);
+  });
+  return Array.from(set);
 }

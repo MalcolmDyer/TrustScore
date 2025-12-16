@@ -15,8 +15,12 @@ async function init() {
   document.getElementById("allowlistForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const input = document.getElementById("allowlistInput");
-    const domain = input.value.trim().toLowerCase();
-    if (!domain) return;
+    const domain = normalizeDomain(input.value);
+    if (!domain) {
+      input.value = "";
+      input.placeholder = "Enter a valid domain like example.com";
+      return;
+    }
     await toggleAllowlist(domain, true);
     input.value = "";
     const updated = await getSettings();
@@ -69,6 +73,21 @@ function escapeHtml(str = "") {
     const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
     return map[char] || char;
   });
+}
+
+function normalizeDomain(value = "") {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  try {
+    const parsed = new URL(trimmed.includes("://") ? trimmed : `https://${trimmed}`);
+    const hostname = parsed.hostname.toLowerCase().replace(/^\./, "");
+    if (!hostname || hostname.includes("..") || !/^[a-z0-9.-]+$/.test(hostname)) {
+      return "";
+    }
+    return hostname;
+  } catch (err) {
+    return "";
+  }
 }
 
 function getSettings() {
