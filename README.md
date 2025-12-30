@@ -7,7 +7,7 @@ Behavioral TrustScore detector that scores pages (0–100 with 100 being "safe")
 - `background.js` — TrustScore engine, storage, allowlist, history.
 - `contentScript.js` — signal collectors, behavior observers, in-page widget/banner.
 - `popup.*` — popup UI showing score, breakdown, reasons, history.
-- `options.*` — sensitivity/allowlist/backend toggles.
+- `options.*` — sensitivity/allowlist/backend toggling.
 
 ## Quick test in Chrome/Edge
 1) Open `chrome://extensions` (or `edge://extensions`), enable Developer mode.  
